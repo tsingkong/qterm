@@ -66,7 +66,17 @@ void Http::getLink(const QString& url, bool preview)
         }
     }
     m_strHttpFile = QFileInfo(u.path()).fileName();
-    m_httpReply = m_httpDown.get(QNetworkRequest(u));
+
+	// 发送https请求前准备工作;
+	QNetworkRequest request;
+	QSslConfiguration config;
+	QSslConfiguration conf = request.sslConfiguration();
+	conf.setPeerVerifyMode(QSslSocket::VerifyNone);
+	conf.setProtocol(QSsl::TlsV1SslV3);
+	request.setSslConfiguration(conf);
+	request.setUrl(u);
+
+    m_httpReply = m_httpDown.get(request);
 
     connect(m_httpReply, SIGNAL(finished()), this, SLOT(httpDone()));
     connect(m_httpReply, SIGNAL(downloadProgress(qint64, qint64)),

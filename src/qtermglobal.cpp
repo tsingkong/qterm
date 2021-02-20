@@ -32,6 +32,10 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QtXml/QDomDocument>
+// for test
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QSslSocket>
 
 #if defined(_OS_WIN32_) || defined(Q_OS_WIN32)
 #include <windows.h>
@@ -88,6 +92,21 @@ Global::Global()
         m_status = INIT_ERROR;
         return;
     }
+
+	// for test
+	bool bSupp = QSslSocket::supportsSsl();
+	QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
+	QString version = QSslSocket::sslLibraryVersionString();
+	// false "OpenSSL 1.0.2h  3 May 2016" "" 
+	qDebug() << bSupp << buildVersion << version << endl;
+
+	QNetworkAccessManager m_httpDown;
+	QStringList list = m_httpDown.supportedSchemes();
+	// ("ftp", "file", "qrc", "http", "data")
+	// (¡°ftp¡±, ¡°file¡±, ¡°qrc¡±, ¡°http¡±, ¡°https¡±, ¡°data¡±)
+	// ²Î¿¼ https://blog.csdn.net/qing666888/article/details/106318741
+	//      https://blog.csdn.net/zsf211/article/details/83987057
+	qDebug() << m_httpDown.supportedSchemes();
 }
 
 bool Global::isOK()
